@@ -11,7 +11,7 @@ import {
   Obstacle,
   Position,
 } from "../types/game";
-import { initialState } from "./game.state";
+import { initialState } from "./game";
 
 type ParseSection = "none" | "grid" | "obstacles" | "commands";
 
@@ -27,7 +27,7 @@ export const parse = (input: string): GameState => {
 
   rows.forEach((row: string) => {
     if (row !== "") {
-      console.log(`section ${currentSection} row '${row}'`);
+      //console.log(`section ${currentSection} row '${row}'`);
 
       if (currentSection === "none" && row.startsWith("Size")) {
         currentSection = "grid";
@@ -37,7 +37,6 @@ export const parse = (input: string): GameState => {
         }
         gridWidth = parseInt(sizes[1], 10);
         gridHeight = parseInt(sizes[2], 10);
-        console.log(`sizes w:${gridWidth} h:${gridHeight}`);
       } else if (row.startsWith("Obstacle")) {
         currentSection = "obstacles";
         const positions = row.split(" ");

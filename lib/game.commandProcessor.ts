@@ -14,8 +14,9 @@ import {
   Position,
 } from "../types/game";
 import Grid, { Cell } from "../types/grid";
+import { clone } from "./utils";
 
-const clone = (state: any) => JSON.parse(JSON.stringify(state));
+
 
 const NEXT_TURN_LEFT: any = {
   N: "W",

@@ -14,6 +14,7 @@ import {
   Position,
 } from "../types/game";
 import Grid, { Cell } from "../types/grid";
+import { clone } from "./utils";
 
 // for resetting and set a new game state
 export const initialState = (
@@ -66,3 +67,9 @@ const newGrid = (
   };
   return generateGrid(rows, columns, celllMappingFunction);
 };
+
+// used for UI rapresentation, mirror rows like the examples so y axis is from bottom to top
+export const mirrorGrid = (state: GameState) : Cell[][] => {
+  const newGrid: Grid = clone(state.grid)
+  return newGrid.cells.reverse();
+}
