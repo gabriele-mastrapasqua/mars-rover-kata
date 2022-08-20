@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:cover": "yarn test --coverage",
+    "test:coverage": "yarn test --coverage",
     "test:watch": "yarn test --watchAll"
   },
   "dependencies": {
