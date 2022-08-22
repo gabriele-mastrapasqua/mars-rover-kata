@@ -14,9 +14,7 @@ import {
   Position,
 } from "../types/game";
 import Grid, { Cell } from "../types/grid";
-import { clone } from "./utils";
-
-
+import { clone, mod } from "./utils";
 
 const NEXT_TURN_LEFT: any = {
   N: "W",
@@ -78,12 +76,12 @@ const move = (state: GameState, moveCommand: MoveCommand): GameState | null => {
   // get moving properties based on where player is facing
   const nextMoveProperties = mappingMoves[newState.playerPosition.direction];
 
-  // calculate next move plus check for grid overflow
-  (newState.playerPosition[nextMoveProperties.axis] +
-    nextMoveProperties.increment) %
-    (nextMoveProperties.axis === "y"
-      ? newState.grid.height
-      : newState.grid.width);
+  // calculate next move plus check for grid overflow using the modulo
+  newState.playerPosition[nextMoveProperties.axis] = mod(
+    newState.playerPosition[nextMoveProperties.axis] +
+      nextMoveProperties.increment,
+    nextMoveProperties.axis === "y" ? newState.grid.height : newState.grid.width
+  );
 
   // check collision: validate next move if is feasible
   const hasMoveCollided = checkCollision(
@@ -98,9 +96,13 @@ const move = (state: GameState, moveCommand: MoveCommand): GameState | null => {
 };
 
 const checkCollision = (grid: Grid, position: Position): boolean => {
-  // TODO - add for each err 1 test
-  if (!grid.cells || grid.cells.length == 0 || grid.cells[0].length) {
-    throw new Error("invalid grid cells of len 0");
+  //console.log("check collision first", grid.cells, "position", position);
+
+  if (!grid.cells || grid.cells.length == 0) {
+    throw new Error("invalid grid cells empty of with len 0");
+  }
+  if (grid.cells[0].length === 0) {
+    throw new Error("invalid first row grid cells of len 0");
   }
 
   if (position.y >= grid.cells.length) {
@@ -122,6 +124,7 @@ const checkCollision = (grid: Grid, position: Position): boolean => {
   return false;
 };
 
+/*
 // recursevly process coommands, one by one and return a new state
 const executeCommand = (
   state: GameState,
@@ -184,36 +187,80 @@ const playStep = (state: GameState): GameState => {
 
   return newState;
 };
+*/
 
-const generateGrid = (
-  rows: number,
-  columns: number,
-  mapValuesFunction: (rowIndex: number, colIndex: number) => Cell
-): Grid => {
-  return {
-    width: columns,
-    height: rows,
-    cells: Array(rows)
-      .fill(undefined)
-      .map((row, rowIndex: number) =>
-        Array(columns)
-          .fill(undefined)
-          .map((col, colIndex: number) => mapValuesFunction(rowIndex, colIndex))
-      ),
-  } as Grid;
-};
+// a generator function that process the command and yield a new game state
+function* makeCommandIterator(
+  state: GameState,
+  commandSequence: CommandSequence
+) {
+  if (commandSequence.length === 0) {
+    return;
+  }
 
-const newGrid = (
-  rows: number,
-  columns: number,
-  obstacles: Obstacle[]
-): Grid => {
-  // this f(x) maps cell type (empty or collisionable) in the grid
-  const celllMappingFunction = (rowIndex: number, colIndex: number): Cell => {
-    if (obstacles.includes({ position: { x: colIndex, y: rowIndex } })) {
-      return "X";
+  let commandIndex = 0;
+  let lastState = state;
+  while (true) {
+    // check for finishing the sequence, return the new state plus result
+    if (commandIndex >= commandSequence.length) {
+      yield {
+        ...lastState,
+        currentCommandSequence: lastState.currentCommandSequence + 1,
+        commandsResults: [
+          ...lastState.commandsResults,
+          `${lastState.playerPosition.x}:${lastState.playerPosition.y}:${lastState.playerPosition.direction}`,
+        ],
+      } as GameState;
+
+      return; // exit generator
     }
-    return "0";
-  };
-  return generateGrid(rows, columns, celllMappingFunction);
-};
+
+    const command = commandSequence[commandIndex];
+    //console.log("executing command", command);
+
+    // it is a turn command
+    if (turnCommandArray.includes(command as TurnCommand)) {
+      lastState = turn(lastState, command as TurnCommand);
+      yield lastState;
+    } else {
+      // else is a move command
+      const moveState = move(lastState, command as MoveCommand);
+      // got a collision! stop all the commands sequence
+      if (!moveState) {
+        yield {
+          ...lastState,
+          currentCommandSequence: lastState.currentCommandSequence + 1,
+          commandsResults: [
+            ...lastState.commandsResults,
+            `O:${lastState.playerPosition.x}:${lastState.playerPosition.y}:${lastState.playerPosition.direction}`,
+          ],
+        } as GameState;
+
+        return;
+      } else {
+        lastState = moveState;
+        yield lastState;
+      }
+    }
+
+    commandIndex++;
+  }
+}
+
+// consume a command sequence using a generator function, so we can iterate throgh commands one by one
+export function executeCommandSequence(
+  state: GameState,
+  commandSequence: CommandSequence
+): GameState {
+  console.log("* Command sequence to process: ", commandSequence);
+
+  const commandsIterator = makeCommandIterator(state, commandSequence);
+  let lastState = state;
+  for (const newState of commandsIterator) {
+    console.log("\tNEXT command new state: ", newState.playerPosition);
+
+    lastState = clone(newState);
+  }
+  //console.log("ending new state: ", lastState);
+  return lastState;
+}
