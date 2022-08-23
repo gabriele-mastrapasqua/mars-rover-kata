@@ -32,6 +32,23 @@ describe("test executing commmands", () => {
     expect(newState.commandsResults.length).toBe(1);
     expect(newState.commandsResults[0]).toEqual("0:0:W");
   });
+  it("should execute backward moves", () => {
+    const game: GameState = parse(`
+        Grid
+        Size 5 4
+        Commands
+        FB
+        `);
+
+    expect(game).not.toBe(null);
+    expect(game.obstacles.length).toBe(0);
+    expect(game.commands.length).toBe(1);
+
+    expect(game.commands[0]).toEqual(["F", "B"]);
+    let newState = executeCommandSequence(game, game.commands[0]);
+    expect(newState.commandsResults.length).toBe(1);
+    expect(newState.commandsResults[0]).toEqual("0:0:N");
+  });
 
   it("should handle grid overflow", () => {
     const game: GameState = parse(`
