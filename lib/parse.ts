@@ -10,7 +10,7 @@ import {
   Obstacle,
 } from "../types/game";
 import { InvalidCommandError, InvalidCommandSequenceError, InvalidGridError, InvalidObstaclesError } from "./errors";
-import { initialState } from "./game";
+import { initialState, newGameState } from "./game";
 
 type ParseSection = "none" | "grid" | "obstacles" | "commands";
 
@@ -70,7 +70,7 @@ export const parse = (input: string): GameState => {
     throw new InvalidCommandSequenceError("Bad commands parsed! We got no commands to execute!");
   }
 
-  const game = initialState(gridWidth, gridHeight, obstacles, commands);
+  const game = newGameState(gridWidth, gridHeight, obstacles, commands);
   return game;
 };
 const validateCommands = (commandList: string[]): boolean => {

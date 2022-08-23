@@ -14,10 +14,22 @@ import {
   Position,
 } from "../types/game";
 import Grid, { Cell } from "../types/grid";
-import { clone } from "./utils";
+import { clone, mod } from "./utils";
 
 // for resetting and set a new game state
 export const initialState = (
+): GameState => {
+  return {
+    playerPosition: { x: 0, y: 0, direction: "N" },
+    grid: null,
+    status: "pending",
+    obstacles: [],
+    commands: [],
+    currentCommandSequence: 0,
+    commandsResults: [],
+  } as GameState;
+};
+export const newGameState = (
   gridWidth: number,
   gridHeight: number,
   obstacles: Obstacle[],
@@ -72,4 +84,11 @@ const newGrid = (
 export const mirrorGrid = (state: GameState) : Cell[][] => {
   const newGrid: Grid = clone(state.grid)
   return newGrid.cells.reverse();
+}
+
+// used for UI rapresentation, mirror rows like the examples so y axis is from bottom to top
+export const mirrorPlayer = (state: GameState) : PlayerPosition => {
+  const newPlayerPosition: PlayerPosition = clone(state.playerPosition);
+  newPlayerPosition.y = mod( (state.grid.height -1) - newPlayerPosition.y, state.grid.height);
+  return newPlayerPosition
 }

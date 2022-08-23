@@ -1,3 +1,5 @@
+import { CommandSequence } from "./commands";
+import Grid from "./grid";
 
 export type Direction = "N" | "S" | "E" | "W"; // N: nord, ...
 
