@@ -1,16 +1,15 @@
 import {
-  Command,
   CommandSequence,
+  MoveCommand,
   moveCommandArray,
+  TurnCommand,
   turnCommandArray,
 } from "../types/commands";
 import {
-  Direction,
   GameState,
-  PlayerPosition,
   Obstacle,
-  Position,
 } from "../types/game";
+import { InvalidCommandError, InvalidCommandSequenceError, InvalidGridError, InvalidObstaclesError } from "./errors";
 import { initialState } from "./game";
 
 type ParseSection = "none" | "grid" | "obstacles" | "commands";
@@ -33,7 +32,7 @@ export const parse = (input: string): GameState => {
         currentSection = "grid";
         const sizes = row.split(" ");
         if (sizes.length !== 3) {
-          throw new Error(`Bad grid size format: ${row}`);
+          throw new InvalidGridError(`Bad grid size format: ${row}`);
         }
         gridWidth = parseInt(sizes[1], 10);
         gridHeight = parseInt(sizes[2], 10);
@@ -41,7 +40,7 @@ export const parse = (input: string): GameState => {
         currentSection = "obstacles";
         const positions = row.split(" ");
         if (positions.length !== 3) {
-          throw new Error(`Bad obstacles line format: ${row}`);
+          throw new InvalidObstaclesError(`Bad obstacles line format: ${row}`);
         }
         const x = parseInt(positions[1], 10);
         const y = parseInt(positions[2], 10);
@@ -54,8 +53,9 @@ export const parse = (input: string): GameState => {
       if (currentSection === "commands" && !row.startsWith("Commands")) {
         const commandSequence = row.split("");
         if (commandSequence.length === 0) {
-          throw new Error(`Bad command line format: ${row}`);
+          throw new InvalidCommandSequenceError(`Bad command line format: ${row}`);
         }
+        validateCommands(commandSequence);
         commands.push(commandSequence as CommandSequence);
       }
     }
@@ -63,13 +63,22 @@ export const parse = (input: string): GameState => {
 
   // basic check for input errors
   if (gridWidth === 0 || gridHeight === 0) {
-    throw new Error("Bad grid size parsed!");
+    throw new InvalidGridError("Bad grid size parsed!");
   }
 
   if (commands.length === 0) {
-    throw new Error("Bad commands parsed! We got no commands to execute!");
+    throw new InvalidCommandSequenceError("Bad commands parsed! We got no commands to execute!");
   }
 
   const game = initialState(gridWidth, gridHeight, obstacles, commands);
   return game;
 };
+const validateCommands = (commandList: string[]): boolean => {
+  commandList.forEach(command => {
+    if( !turnCommandArray.includes(command as TurnCommand) && !moveCommandArray.includes(command as MoveCommand) ){
+      throw new InvalidCommandError(`invalid commmand: ${command}`)
+    }
+  })
+  return true;
+};
+

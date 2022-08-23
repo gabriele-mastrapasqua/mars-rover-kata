@@ -14,6 +14,7 @@ import {
   Position,
 } from "../types/game";
 import Grid, { Cell } from "../types/grid";
+import { InvalidGridError, InvalidPlayerPositionError } from "./errors";
 import { clone, mod } from "./utils";
 
 const NEXT_TURN_LEFT: any = {
@@ -99,19 +100,19 @@ const checkCollision = (grid: Grid, position: Position): boolean => {
   //console.log("check collision first", grid.cells, "position", position);
 
   if (!grid.cells || grid.cells.length == 0) {
-    throw new Error("invalid grid cells empty of with len 0");
+    throw new InvalidGridError("invalid grid cells empty of with len 0");
   }
   if (grid.cells[0].length === 0) {
-    throw new Error("invalid first row grid cells of len 0");
+    throw new InvalidGridError("invalid first row grid cells of len 0");
   }
 
   if (position.y >= grid.cells.length) {
-    throw new Error(
+    throw new InvalidPlayerPositionError(
       `invalid position y for the grid max rows: ${grid.cells.length}`
     );
   }
   if (position.x >= grid.cells[0].length) {
-    throw new Error(
+    throw new InvalidPlayerPositionError(
       `invalid position x for the grid max cols: ${grid.cells[0].length}`
     );
   }
@@ -252,12 +253,12 @@ export function executeCommandSequence(
   state: GameState,
   commandSequence: CommandSequence
 ): GameState {
-  console.log("* Command sequence to process: ", commandSequence);
+  //console.log("* Command sequence to process: ", commandSequence);
 
   const commandsIterator = makeCommandIterator(state, commandSequence);
   let lastState = state;
   for (const newState of commandsIterator) {
-    console.log("\tNEXT command new state: ", newState.playerPosition);
+    //console.log("\tNEXT command new state: ", newState.playerPosition);
 
     lastState = clone(newState);
   }
