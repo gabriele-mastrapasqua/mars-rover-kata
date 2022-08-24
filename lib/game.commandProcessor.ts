@@ -138,7 +138,7 @@ export function* makeCommandIterator(
     ...state,
     status: 'running',
   } as GameState
-  
+
   yield lastState
 
   while (true) {
