@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import '../styles/button.css'
 import type {AppProps} from 'next/app'
 import {GameProvider} from '../contexts/game.context'
 
