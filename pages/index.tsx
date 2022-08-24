@@ -24,6 +24,10 @@ const Home: NextPage = () => {
   )
   const {state, dispatch} = useGame()
 
+  const formatOutput = (commandResults: string[]) => {
+    return commandResults.join('\n')
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -67,7 +71,7 @@ const Home: NextPage = () => {
           <Grid grid={mirrorGrid(state)} playerPosition={mirrorPlayer(state)} />
         )}
         output:
-        <textarea />
+        <textarea value={formatOutput(state.commandsResults)} />
       </main>
     </div>
   )
