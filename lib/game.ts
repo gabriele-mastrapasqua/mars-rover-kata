@@ -94,6 +94,9 @@ export const mirrorGrid = (state: GameState): Cell[][] => {
 
 // used for UI rapresentation, mirror rows like the examples so y axis is from bottom to top
 export const mirrorPlayer = (state: GameState): PlayerPosition => {
+  if(!state.grid) {
+    return state.playerPosition;
+  }
   const newPlayerPosition: PlayerPosition = clone(state.playerPosition)
   newPlayerPosition.y = mod(
     state.grid.height - 1 - newPlayerPosition.y,

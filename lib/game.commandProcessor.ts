@@ -137,7 +137,8 @@ export function* makeCommandIterator(
   let lastState = {
     ...state,
     status: 'running',
-  }
+  } as GameState
+  
   yield lastState
 
   while (true) {
