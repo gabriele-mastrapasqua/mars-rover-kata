@@ -34,7 +34,6 @@ const Grid: React.FC<Props> = ({ grid, playerPosition }) => {
               {playerPosition.x === colIdx && playerPosition.y === rowIdx && (
                 <Player playerPosition={playerPosition}/>
               )}
-              row {rowIdx} col {colIdx}
             </Cell>
           ))
         )}

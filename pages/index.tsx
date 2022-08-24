@@ -71,7 +71,7 @@ const Home: NextPage = () => {
           <Grid grid={mirrorGrid(state)} playerPosition={mirrorPlayer(state)} />
         )}
         output:
-        <textarea value={formatOutput(state.commandsResults)} />
+        <textarea value={formatOutput(state.commandsResults)} rows={5} />
       </main>
     </div>
   )
