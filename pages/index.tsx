@@ -78,7 +78,7 @@ const Home: NextPage = () => {
                 />
                 <div className="command-panel">
                   <button
-                    disabled={!state.grid}
+                    disabled={!state.grid || (state.currentCommandSequence + 1 <= state.commands.length)}
                     onClick={() => dispatch({type: 'reset'})}
                   >
                     Reset game
@@ -125,9 +125,10 @@ const Home: NextPage = () => {
                   */}
                     Time:{' '}
                     <input
+                      disabled={state.status === 'running'}
                       type="number"
                       min={0}
-                      style={{width: '50px'}}
+                      style={{width: '60px'}}
                       value={timeNextTick}
                       onChange={e =>
                         setTimeNextTick(parseInt(e.target.value, 10))
@@ -160,7 +161,7 @@ const Home: NextPage = () => {
                             })
                             setTimeout(() => {
                               executeNextCommand(commandsIterator)
-                            }, 500)
+                            }, timeNextTick)
                           }
                         }
 
@@ -170,6 +171,9 @@ const Home: NextPage = () => {
                       Process next commands sequence
                     </button>
                   </div>
+                  {(state.currentCommandSequence >= state.commands.length) && (
+                    <h1 style={{color: '#59e359'}}>Game completed!</h1>
+                  )}
                 </div>
               </div>
             )}
