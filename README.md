@@ -1,6 +1,8 @@
 # Mars rover kata
 
-This is the mars rover kata inspired by [https://kata-log.rocks/mars-rover-kata](https://kata-log.rocks/mars-rover-kata) using typescript, react and jest for unit testing!
+This is the mars rover kata inspired by [https://kata-log.rocks/mars-rover-kata](https://kata-log.rocks/mars-rover-kata) using typescript, nextjs 12, react and jest for unit testing!
+
+You can try it live here: [https://mars-rover-kata.vercel.app/](https://mars-rover-kata.vercel.app/)
 
 ## Run in development
 
