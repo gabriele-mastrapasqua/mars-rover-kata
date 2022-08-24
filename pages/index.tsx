@@ -5,6 +5,9 @@ import Grid from '../components/Grid'
 import {useState} from 'react'
 import {useGame} from '../hooks/game.hook'
 import {mirrorGrid, mirrorPlayer} from '../lib/game'
+import {makeCommandIterator} from '../lib/game.commandProcessor'
+import {clone} from '../lib/utils'
+import {GameState} from '../types/game'
 
 const Home: NextPage = () => {
   const [inputString, setInputString] = useState(
@@ -22,6 +25,7 @@ const Home: NextPage = () => {
       .replace(/  /g, ''),
   )
   const {state, dispatch} = useGame()
+  const [timeNextTick, setTimeNextTick] = useState(500)
 
   const formatOutput = (commandResults: string[]) => {
     return commandResults.join('\n')
@@ -42,6 +46,10 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>Welcome to the Mars rover kata!</h1>
 
+        {state.grid && (
+          <audio src='space-chillout-14194.mp3' autoPlay={true} loop={true} />
+        )}
+
         <div className="container">
           <div className="input-panel">
             <h2>Input</h2>
@@ -54,7 +62,7 @@ const Home: NextPage = () => {
             />
             <div>
               <button
-                disabled={state.grid}
+                disabled={state.grid !== null}
                 onClick={() => dispatch({type: 'parse', input: inputString})}
               >
                 Start game
@@ -69,7 +77,10 @@ const Home: NextPage = () => {
                   rows={5}
                 />
                 <div className="command-panel">
-                  <button disabled={!state.grid} onClick={() => dispatch({type: 'reset'})}>
+                  <button
+                    disabled={!state.grid}
+                    onClick={() => dispatch({type: 'reset'})}
+                  >
                     Reset game
                   </button>
                 </div>
@@ -80,12 +91,23 @@ const Home: NextPage = () => {
           <div>
             {state.grid && (
               <div>
-                <h3>Current comman sequence: </h3>
-                <div className="command-panel">
-                  <input
-                    disabled
-                    value={state.commands[state.currentCommandSequence]}
-                  />{' '}
+                <h3>Game</h3>
+                
+                <Grid
+                  grid={mirrorGrid(state)}
+                  playerPosition={mirrorPlayer(state)}
+                />
+
+                <div className="command-panel" style={{'paddingTop': '10px'}}>
+                  <div className='command-panel'>
+                    Current command sequence:{' '}
+                    <input
+                      disabled
+                      value={state.commands[state.currentCommandSequence]}
+                    />{' '}
+                  </div>
+                  <div>
+                    {/*
                   <button
                     disabled={
                       state.currentCommandSequence >= state.commands.length
@@ -98,13 +120,58 @@ const Home: NextPage = () => {
                       })
                     }
                   >
-                    2. Execute next comman sequence
+                    Execute next comman sequence
                   </button>
+                  */}
+                    Time:{' '}
+                    <input
+                      type="number"
+                      min={0}
+                      style={{'width': '50px'}}
+                      value={timeNextTick}
+                      onChange={e =>
+                        setTimeNextTick(parseInt(e.target.value, 10))
+                      }
+                    />{' '}
+                    <button
+                      disabled={
+                        state.currentCommandSequence >= state.commands.length ||
+                        state.status === 'running'
+                      }
+                      onClick={() => {
+                        // consume the generator function using a timer, so we can see the changes for each moves
+                        const commandSequence =
+                          state.commands[state.currentCommandSequence]
+                        const commandsIterator = makeCommandIterator(
+                          state,
+                          commandSequence,
+                        )
+
+                        const executeNextCommand = (commandsIterator: any) => {
+                          const nextIter = commandsIterator.next()
+                          if (!nextIter.done) {
+                            //console.log('*** next iter', nextIter.value.status)
+                            const nextState = nextIter.value
+                            const lastState = clone(nextState)
+
+                            dispatch({
+                              type: 'updateGameState',
+                              nextState: lastState,
+                            })
+                            setTimeout(() => {
+                              executeNextCommand(commandsIterator)
+                            }, 500)
+                          }
+                        }
+
+                        executeNextCommand(commandsIterator)
+                      }}
+                    >
+                      Process next commands sequence
+                    </button>
+                  </div>
                 </div>
-                <Grid
-                  grid={mirrorGrid(state)}
-                  playerPosition={mirrorPlayer(state)}
-                />
+
               </div>
             )}
           </div>

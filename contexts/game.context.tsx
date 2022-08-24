@@ -9,6 +9,8 @@ type Action =
   | {type: 'reset'}
   | {type: 'parse'; input: string}
   | {type: 'nextCommands'; commandSequence: CommandSequence}
+  | {type: 'updateGameState'; nextState: GameState}
+
 type Dispatch = (action: Action) => void
 type GameProviderProps = {children: React.ReactNode}
 
@@ -22,13 +24,14 @@ function gameReducer(state: GameState, action: Action) {
       return initialState()
     }
     case 'parse': {
-      console.log('context parse action', action)
       const nextState = parse(action.input)
-      console.log('context parse action next', nextState)
       return nextState
     }
     case 'nextCommands': {
       return executeCommandSequence(state, action.commandSequence)
+    }
+    case 'updateGameState': {
+      return action.nextState
     }
   }
 }

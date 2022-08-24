@@ -22,7 +22,7 @@ export type Obstacle = {
 export interface GameState {
   playerPosition: PlayerPosition // rover position
   grid: Grid // Grid of rows and cols
-  status: 'pending' | 'running' | 'finished' // for UI start, stop
+  status: 'pending' | 'running' | 'stopped' | 'finished' // for UI start, stop
   obstacles: Obstacle[]
   commands: CommandSequence[]
   currentCommandSequence: number

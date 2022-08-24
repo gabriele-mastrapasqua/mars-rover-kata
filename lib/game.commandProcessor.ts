@@ -124,73 +124,8 @@ const checkCollision = (grid: Grid, position: Position): boolean => {
   return false
 }
 
-/*
-// recursevly process coommands, one by one and return a new state
-const executeCommand = (
-  state: GameState,
-  commandSequence: CommandSequence,
-  commandIndex: number
-): GameState => {
-  // check for finishing the sequence, return the new state plus result
-  if (commandIndex >= commandSequence.length) {
-    return {
-      ...state,
-      commandsResults: [
-        ...state.commandsResults,
-        `${state.playerPosition.x}:${state.playerPosition.y}:${state.playerPosition.direction}`,
-      ],
-    } as GameState;
-  }
-
-  const command = commandSequence[commandIndex];
-
-  // it is a turn command
-  if (turnCommandArray.includes(command as TurnCommand)) {
-    const newState = turn(state, command as TurnCommand);
-    return executeCommand(newState, commandSequence, commandIndex + 1);
-  }
-  // else is a move command
-  const newState = move(state, command as MoveCommand);
-  // got a collision! stop all the commands sequence
-  if (!newState) {
-    return {
-      ...state,
-      commandsResults: [
-        ...state.commandsResults,
-        `O:${state.playerPosition.x}:${state.playerPosition.y}:${state.playerPosition.direction}`,
-      ],
-    } as GameState;
-  }
-
-  // else continue to process the next command
-  return executeCommand(newState, commandSequence, commandIndex + 1);
-};
-const executeCommandSequence = (
-  state: GameState,
-  commandSequence: CommandSequence
-): GameState => {
-  //commandSequence.map((command: Command) => {
-  //    executeCommand(state, command)
-  //})
-  return executeCommand(state, commandSequence, 0);
-};
-const playStep = (state: GameState): GameState => {
-  // TODO - add a timer for UI animation from 1 commands to another
-  const newState = executeCommandSequence(
-    state,
-    state.commands[state.currentCommandSequence]
-  );
-  // increment so we know where we left...
-  if (newState.currentCommandSequence + 1 < newState.commands.length) {
-    newState.currentCommandSequence = newState.currentCommandSequence + 1;
-  }
-
-  return newState;
-};
-*/
-
 // a generator function that process the command and yield a new game state
-function* makeCommandIterator(
+export function* makeCommandIterator(
   state: GameState,
   commandSequence: CommandSequence,
 ) {
@@ -199,13 +134,19 @@ function* makeCommandIterator(
   }
 
   let commandIndex = 0
-  let lastState = state
+  let lastState = {
+    ...state,
+    status: 'running',
+  }
+  yield lastState
+
   while (true) {
     // check for finishing the sequence, return the new state plus result
     if (commandIndex >= commandSequence.length) {
       yield {
         ...lastState,
         currentCommandSequence: lastState.currentCommandSequence + 1,
+        status: 'stopped',
         commandsResults: [
           ...lastState.commandsResults,
           `${lastState.playerPosition.x}:${lastState.playerPosition.y}:${lastState.playerPosition.direction}`,
@@ -230,6 +171,7 @@ function* makeCommandIterator(
         yield {
           ...lastState,
           currentCommandSequence: lastState.currentCommandSequence + 1,
+          status: 'stopped',
           commandsResults: [
             ...lastState.commandsResults,
             `O:${lastState.playerPosition.x}:${lastState.playerPosition.y}:${lastState.playerPosition.direction}`,
