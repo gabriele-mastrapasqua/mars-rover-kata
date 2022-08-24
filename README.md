@@ -1,6 +1,6 @@
 # Mars rover kata
 
-This is the mars rover kata using typescript, react and jest for unit testing!
+This is the mars rover kata inspired by [https://kata-log.rocks/mars-rover-kata](https://kata-log.rocks/mars-rover-kata) using typescript, react and jest for unit testing!
 
 ## Run in development
 
