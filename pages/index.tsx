@@ -54,6 +54,7 @@ const Home: NextPage = () => {
             />
             <div>
               <button
+                disabled={state.grid}
                 onClick={() => dispatch({type: 'parse', input: inputString})}
               >
                 Start game
@@ -67,6 +68,11 @@ const Home: NextPage = () => {
                   value={formatOutput(state.commandsResults)}
                   rows={5}
                 />
+                <div className="command-panel">
+                  <button disabled={!state.grid} onClick={() => dispatch({type: 'reset'})}>
+                    Reset game
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -93,9 +99,6 @@ const Home: NextPage = () => {
                     }
                   >
                     2. Execute next comman sequence
-                  </button>
-                  <button onClick={() => dispatch({type: 'reset'})}>
-                    Reset game
                   </button>
                 </div>
                 <Grid
