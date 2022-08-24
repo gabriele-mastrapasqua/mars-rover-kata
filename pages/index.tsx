@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>Welcome to the Mars rover kata!</h1>
 
         {state.grid && (
-          <audio src='space-chillout-14194.mp3' autoPlay={true} loop={true} />
+          <audio src="space-chillout-14194.mp3" autoPlay={true} loop={true} />
         )}
 
         <div className="container">
@@ -92,14 +92,14 @@ const Home: NextPage = () => {
             {state.grid && (
               <div>
                 <h3>Game</h3>
-                
+
                 <Grid
                   grid={mirrorGrid(state)}
                   playerPosition={mirrorPlayer(state)}
                 />
 
-                <div className="command-panel" style={{'paddingTop': '10px'}}>
-                  <div className='command-panel'>
+                <div className="command-panel" style={{paddingTop: '10px'}}>
+                  <div className="command-panel">
                     Current command sequence:{' '}
                     <input
                       disabled
@@ -127,7 +127,7 @@ const Home: NextPage = () => {
                     <input
                       type="number"
                       min={0}
-                      style={{'width': '50px'}}
+                      style={{width: '50px'}}
                       value={timeNextTick}
                       onChange={e =>
                         setTimeNextTick(parseInt(e.target.value, 10))
@@ -171,7 +171,6 @@ const Home: NextPage = () => {
                     </button>
                   </div>
                 </div>
-
               </div>
             )}
           </div>
