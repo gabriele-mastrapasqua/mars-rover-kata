@@ -1,13 +1,13 @@
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
-import { GameProvider } from "../contexts/game.context";
+import '../styles/globals.css'
+import type {AppProps} from 'next/app'
+import {GameProvider} from '../contexts/game.context'
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({Component, pageProps}: AppProps) {
   return (
     <GameProvider>
       <Component {...pageProps} />
     </GameProvider>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

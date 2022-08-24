@@ -24,3 +24,19 @@ a {
     background: black;
   }
 }
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  justify-content: left;
+  width: 100%;
+  padding: 5vw;
+}
+.input-panel {
+  padding: 10px;
+}
+.command-panel {
+  padding-bottom: 10px;
+}
