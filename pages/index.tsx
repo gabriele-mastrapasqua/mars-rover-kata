@@ -165,11 +165,10 @@ const Home: NextPage = () => {
                               if (!nextIter.done) {
                                 //console.log('*** next iter', nextIter.value.status)
                                 const nextState = nextIter.value
-                                const lastState = clone(nextState)
 
                                 dispatch({
                                   type: 'updateGameState',
-                                  nextState: lastState,
+                                  nextState: nextState,
                                 })
                                 setTimeout(() => {
                                   executeNextCommand(commandsIterator)
