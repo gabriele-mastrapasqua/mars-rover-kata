@@ -4,7 +4,21 @@ This is the mars rover kata using typescript, react and jest for unit testing!
 
 ## Run in development
 
-To run the development server:
+- Use a correct version of nodejs:
+
+```bash
+nvm use
+```
+
+- Install dependencies:
+
+```bash
+npm i
+# or
+yarn
+```
+
+- run the development server:
 
 ```bash
 npm run dev
