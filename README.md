@@ -17,11 +17,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Run with docker
 
 You can run the app using docker running those commands:
+
 ```
 docker build -t nextjs-docker .
 docker run -p 3000:3000 nextjs-docker
 ```
 
+then open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Run tests
 
