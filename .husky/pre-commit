@@ -9,4 +9,4 @@ export NVM_DIR="$HOME/.nvm"
 yarn format
 yarn test
 git add .
-git commit --amend --no-edit
+#git commit --amend --no-edit
