@@ -8,3 +8,5 @@ export NVM_DIR="$HOME/.nvm"
 # on every commit format and run test
 yarn format
 yarn test
+git add .
+git commit --amend --no-edit

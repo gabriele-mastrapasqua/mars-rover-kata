@@ -42,7 +42,7 @@ export const parse = (input: string): GameState => {
     .forEach((row: string) => {
       if (currentSection === 'none' && row.startsWith('Size')) {
         currentSection = 'grid'
-        sizes = parseSizes(row)        
+        sizes = parseSizes(row)
       } else if (row.startsWith('Obstacle')) {
         currentSection = 'obstacles'
         const positions = row.split(' ')
