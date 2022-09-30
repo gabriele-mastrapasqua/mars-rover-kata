@@ -27,6 +27,16 @@ const parseSizes = (row: string) => {
   return [gridWidth, gridHeight]
 }
 
+const parseObstacle = (row: string): Obstacle => {
+  const positions = row.split(' ')
+  if (positions.length !== 3) {
+    throw new InvalidObstaclesError(`Bad obstacles line format: ${row}`)
+  }
+  const x = parseInt(positions[1], 10)
+  const y = parseInt(positions[2], 10)
+  return {position: {x, y}}
+}
+
 export const parse = (input: string): GameState => {
   input = sanitize(input)
 
@@ -40,18 +50,10 @@ export const parse = (input: string): GameState => {
   rows
     .filter(row => row !== '')
     .forEach((row: string) => {
-      if (currentSection === 'none' && row.startsWith('Size')) {
-        currentSection = 'grid'
+      if (row.startsWith('Size')) {
         sizes = parseSizes(row)
       } else if (row.startsWith('Obstacle')) {
-        currentSection = 'obstacles'
-        const positions = row.split(' ')
-        if (positions.length !== 3) {
-          throw new InvalidObstaclesError(`Bad obstacles line format: ${row}`)
-        }
-        const x = parseInt(positions[1], 10)
-        const y = parseInt(positions[2], 10)
-        obstacles.push({position: {x, y}})
+        obstacles.push(parseObstacle(row))
       } else if (row.startsWith('Commands')) {
         currentSection = 'commands'
       }

@@ -1,4 +1,5 @@
 import {GameState} from '../types/game'
+import {initialState, newGameState} from './game'
 import {executeCommandSequence} from './game.commandProcessor'
 import {parse} from './parse'
 
@@ -111,5 +112,12 @@ describe('test executing commmands', () => {
     newState = executeCommandSequence(newState, game.commands[2])
     expect(newState.commandsResults.length).toBe(3)
     expect(newState.commandsResults[2]).toEqual('0:1:W')
+  })
+  it('should execute one command in a new empty game', () => {
+    const game: GameState = newGameState(3, 3, [], [])
+
+    let newState = executeCommandSequence(game, ['R', 'F', 'F'])
+    expect(newState.commandsResults.length).toBe(1)
+    expect(newState.commandsResults[0]).toEqual('2:0:E')
   })
 })
